@@ -36,31 +36,70 @@ router.post('/', validatePost, (req, res) => {
       res.status(200).json(post)
     })
     .catch(error => {
-      res.status(500).json({ message: "Error adding Car" })
+      res.status(500).json({ message: "Error adding Car", error })
     })
 });
 
+router.put('/:id', validateId, (req, res) => {
+  const id = req.params.id
+  const carInfo = req.body
+
+  dbCars.getById(id)
+    .then(found => {
+      if (!carInfo.mileage || !carInfo.title_status) {
+        res.status(400).json({ errorMessage: "Please provide an update" })
+      } else if (!found) {
+        res.status(400).json({ message: "Wrong Id" })
+      } else {
+        dbCars.update(id, carInfo)
+          .then(carUpdate => {
+            res.status(200).json({ message: 'Updated with:', mileage: `${carInfo.mileage}`, title: `${carInfo.title_status}` })
+          })
+          .catch((error) => {
+            res.status(500).json({ message: "Error updating car", error })
+          })
+      }
+    })
+    .catch((error) => {
+      res.status(500).json({ message: "The Update had problems", error })
+    })
+});
+
+
+router.delete('/:id', validateId, (req, res) => {
+  const id = req.params.id
+
+  dbCars.getById(id)
+    .then(deletedCar => {
+      if (deletedCar) {
+        dbCars.remove(id, deletedCar)
+          .then(gone => {
+            res.status(200).json({ message: "The car was deleted", deletedCar })
+          })
+          .catch(() => {
+            res.status(500).json({ message: "There was an error deleting the car" })
+          })
+      } else {
+        res.status(404).json({ message: "A car with that id doesn't exist" })
+      }
+    })
+    .catch(() => {
+      res.status(500).json({ message: "Deleting the car...Not Happening!" })
+    })
+});
 
 // custom middleware
 
 function validateId(req, res, next) {
   const id = req.params.id
 
-  if(!id) {
-    res.status(404).json({message: "Missing Car ID"})
-  } else {
-    dbCars.getById(id)
-    .then(found => {
-      if(!found) {
-        res.status(400).json({message: "A car with that ID can not be found."})
-      } else {
-        next();
-      }
+  dbCars.getById(id)
+    .then(id => {
+      req.car = id
     })
-    .catch(error => {
-      res.status(500).json({message: "Error getting that car.", error})
+    .catch(() => {
+      res.status(400).json({ message: "invalid car id" })
     })
-  }
   next();
 }
 
