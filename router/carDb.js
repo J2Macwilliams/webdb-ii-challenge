@@ -9,7 +9,7 @@ module.exports = {
 };
 
 function get() {
-  return db('');
+  return db('cars');
 }
 
 function getById(id) {
@@ -19,7 +19,7 @@ function getById(id) {
 }
 
 function insert(post) {
-  return db('')
+  return db('cars')
     .insert(post)
     .then(ids => {
       return getById(ids[0]);
@@ -27,13 +27,13 @@ function insert(post) {
 }
 
 function update(id, changes) {
-  return db('')
+  return db('cars')
     .where({ id })
     .update(changes);
 }
 
 function remove(id) {
-  return db('')
+  return db('cars')
     .where('id', id)
     .del();
 }
