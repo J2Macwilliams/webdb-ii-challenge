@@ -13,7 +13,7 @@ function get() {
 }
 
 function getById(id) {
-  return db('')
+  return db('cars')
     .where({ id })
     .first();
 }
