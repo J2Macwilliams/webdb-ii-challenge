@@ -46,14 +46,14 @@ router.put('/:id', validateId, (req, res) => {
 
   dbCars.getById(id)
     .then(found => {
-      if (!carInfo.mileage || !carInfo.title_status) {
+      if (!carInfo.VIN || !carInfo.make || !carInfo.model || !carInfo.engine || !carInfo.transmission || !carInfo.mileage || !carInfo.title_status) {
         res.status(400).json({ errorMessage: "Please provide an update" })
       } else if (!found) {
         res.status(400).json({ message: "Wrong Id" })
       } else {
         dbCars.update(id, carInfo)
           .then(carUpdate => {
-            res.status(200).json({ message: 'Updated with:', mileage: `${carInfo.mileage}`, title: `${carInfo.title_status}` })
+            res.status(200).json({ message: 'Updated with:', VIN: `${carInfo.VIN}`, make:`${carInfo.make}`, model:`${carInfo.model}`, engine:`${carInfo.engine}`, transmission:`${carInfo.transmission}`, mileage:`${carInfo.mileage}`, title_status:`${carInfo.title_status}` })
           })
           .catch((error) => {
             res.status(500).json({ message: "Error updating car", error })

@@ -4,8 +4,7 @@ exports.up = function(knex) {
       cars.increments();
       cars.string('VIN', 17)
       .notNullable()
-      .unique()
-      .index();
+      .unique();
       cars.string('make', 255)
       .notNullable()
       .index();
@@ -14,6 +13,8 @@ exports.up = function(knex) {
       .index();
       cars.integer('mileage')
       .notNullable()
+      .index();
+      cars.string('engine', 255)
       .index();
       cars.string('transmission', 150)
       .index();
